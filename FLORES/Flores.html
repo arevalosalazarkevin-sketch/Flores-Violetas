@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramo Mágico Total 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  min-height:100vh;
+  font-family:'Dancing Script', cursive;
+  overflow-x:hidden;
+  background: linear-gradient(160deg, #f0d4ff, #ffe3f3, #e0b3ff);
+  background-size: 400% 400%;
+  animation: gradientBG 30s ease infinite;
+  position:relative;
+}
+
+@keyframes gradientBG{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* Destellos mágicos */
+.star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  opacity:0;
+  animation:twinkle 3s infinite;
+}
+@keyframes twinkle{
+  0%{opacity:0;}
+  50%{opacity:1;}
+  100%{opacity:0;}
+}
+
+/* Contenedor de flores */
+#flower-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+  gap:40px;
+  justify-items:center;
+  align-items:start;
+  width:95%;
+  margin:0 auto;
+  padding-top:50px;
+}
+
+/* Flor */
+.flower{
+  position:relative;
+  width:70px;
+  height:70px;
+  cursor:pointer;
+  transition:transform .8s ease, box-shadow .5s ease;
+  animation:floaty 6s ease-in-out infinite;
+}
+.flower:hover{ transform:scale(1.08) rotate(-1deg); }
+
+/* Brillo al abrir */
+.flower.glow::after{
+  content:"";
+  position:absolute;
+  top:0; left:0; width:100%; height:100%;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,0.8), transparent 60%);
+  animation:glow 0.8s ease-out forwards;
+  z-index:5;
+}
+@keyframes glow{
+  0%{ opacity:1; transform:scale(0.5); }
+  100%{ opacity:0; transform:scale(2); }
+}
+
+/* Pétalos realistas con gradiente */
+.petal{
+  position:absolute;
+  width:30px;
+  height:50px;
+  top:10px;
+  left:20px;
+  border-radius: 50% 50% 45% 55% / 60% 60% 40% 40%;
+  transform-origin: bottom center;
+  transition:transform 1s ease, opacity 1s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  z-index:1;
+}
+.petal:nth-child(1){ transform: rotate(0deg) translateY(-5px) scale(1); }
+.petal:nth-child(2){ transform: rotate(72deg) translateY(-5px) scale(0.95); }
+.petal:nth-child(3){ transform: rotate(144deg) translateY(-5px) scale(1.05); }
+.petal:nth-child(4){ transform: rotate(216deg) translateY(-5px) scale(0.98); }
+.petal:nth-child(5){ transform: rotate(288deg) translateY(-5px) scale(1.02); }
+
+.flower.open .petal:nth-child(1){ transform: rotate(0deg) translateY(-35px) scale(1); }
+.flower.open .petal:nth-child(2){ transform: rotate(70deg) translateY(-32px) scale(0.95); }
+.flower.open .petal:nth-child(3){ transform: rotate(140deg) translateY(-34px) scale(1.05); }
+.flower.open .petal:nth-child(4){ transform: rotate(210deg) translateY(-33px) scale(0.98); }
+.flower.open .petal:nth-child(5){ transform: rotate(280deg) translateY(-36px) scale(1.02); }
+
+/* Centro de la flor corregido, más pequeño y suave */
+.flower::before{
+  content:'';
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:12px; height:12px;
+  background: radial-gradient(circle, rgba(255,224,102,0.9), rgba(255,179,71,0.6));
+  border-radius:50%;
+  box-shadow:0 0 6px rgba(0,0,0,0.1);
+  z-index:2;
+}
+
+/* Mensajes de cada flor */
+.message{
+  position:absolute;
+  top:55px; left:50%;
+  transform:translateX(-50%);
+  opacity:0;
+  color:#6b0080;
+  font-size:14px;
+  text-align:center;
+  width:140px;
+  font-weight:600;
+  pointer-events:none;
+  text-shadow:0 0 5px rgba(255,255,255,0.6);
+  z-index:5; /* sobre los pétalos */
+  transition:opacity 1s ease, transform 1s ease;
+}
+.flower.open .message{
+  opacity:1;
+  transform:translateX(-50%) translateY(0) scale(1.1);
+}
+
+/* Pétalos que caen con curva y giro */
+.petal-fall{
+  position:fixed;
+  width:12px; height:12px;
+  border-radius:50%;
+  pointer-events:none;
+  animation:fall 4s linear forwards;
+  z-index:999;
+}
+@keyframes fall {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Animaciones suaves de flotación */
+@keyframes floaty{
+  0%{ transform:translateY(0px) rotate(0deg); }
+  50%{ transform:translateY(-6px) rotate(2deg); }
+  100%{ transform:translateY(0px) rotate(0deg); }
+}
+
+/* Mensaje final y foto */
+.final-message{
+  position:fixed;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-size:3rem;
+  color:#1e68d1;
+  text-align:center;
+  z-index:6;
+  transition:transform 1s ease, opacity 1s ease;
+}
+.final-message.show{
+  transform:translate(-50%,-50%) scale(1);
+  opacity:1;
+  animation:sparkle 1s ease-in-out infinite alternate;
+}
+@keyframes sparkle{
+  0%{ text-shadow:0 0 20px #ffb3ff,0 0 30px #d980ff,0 0 40px #ff80ff; }
+  50%{ text-shadow:0 0 40px #ff99ff,0 0 50px #b266ff,0 0 60px #ff66ff; }
+  100%{ text-shadow:0 0 20px #ffb3ff,0 0 30px #d980ff,0 0 40px #ff80ff; }
+}
+
+#finalPhoto{
+  position:fixed;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  width:350px; height:auto;
+  border-radius:15px;
+  box-shadow:0 0 30px rgba(0,0,0,0.6);
+  z-index:5;
+  transition:transform 1s ease, opacity 1s ease;
+  opacity:0;
+}
+#finalPhoto.show{
+  transform:translate(-50%,-50%) scale(1);
+  opacity:1;
+}
+
+/* Audio */
+audio{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:300px;
+  z-index:3;
+  opacity:0.85;
+  border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<div id="flower-container"></div>
+
+<!-- Canción -->
+<audio controls autoplay loop>
+  <source src="../FLORES/Bad Bunny ft. Bomba Estéreo - Ojitos Lindos (Video Oficial) _ Un Verano Sin Ti [wAjHQXrIj9o].mp3" type="audio/mpeg">
+</audio>
+
+<!-- Mensaje final y foto -->
+<div class="final-message" id="finalMsg">Te amo con toda mi alma 💖</div>
+<img id="finalPhoto" src="../FLORES/923eaea0-8b52-4030-93b0-b146dd3a5812.jpg" alt="Nosotros">
+
+<script>
+const messages=[
+"Eres mi sol 🌞","Mi razón 💜","Siempre tú 💖","Mi alegría 🌷","Eres magia ✨",
+"Mi tesoro 💎","Sonrisa mía 😊","Mi cielo ☁️","Mi encanto 🌸","Mi todo 💫",
+"Dulzura 💕","Mi estrella ⭐","Corazón bonito 💖","Mi mundo 🌍","Rayo de luz 🌟",
+"Mi alegría pura 💝","Eres mi calma 🌈","Mi inspiración 🌹","Mi musa 🎶","Mi paz 🕊️",
+"Mi melodía 🎵","Mi ilusión 💌","Mi abrazo 🤗","Mi sueño 🌙","Mi latido ❤️",
+"Mi deseo 💋","Mi ternura 💕","Mi esperanza 🌼","Mi chispa ⚡","Mi refugio 🏡",
+"Mi caricia 💞","Mi destino 💫","Mi horizonte 🌅","Mi secreto 💭","Mi refugio seguro 🦋",
+"Mi fortuna 🍀","Mi confianza 🤍","Mi jardín 🌺","Mi amor eterno 💓","Mi complicidad 💬",
+"Mi deseo cumplido 💫","Mi horizonte violeta 💜","Mi atardecer favorito 🌇","Mi noche estrellada 🌌","Mi sueño despierto ☁️",
+"Mi destino brillante ✨","Mi alegría sin fin 🌸","Mi alma gemela 💞","Mi milagro 🌷","Mi universo 🌠"
+];
+
+const colors=[['#e0b3ff','#c77dff'],['#d3a4ff','#b266ff'],['#bb86fc','#7b2cbf'],['#a64aff','#6b00b3'],['#d8b4ff','#9d4edd'],['#ffd6ff','#f4aaff'],['#ffc8dd','#ffafcc'],['#bde0fe','#a2d2ff'],['#cdb4db','#b089f0'],['#dab6fc','#c08bff']];
+
+const container=document.getElementById('flower-container');
+
+// Crear flores
+messages.forEach((msg,index)=>{
+  const flower=document.createElement('div');
+  flower.className='flower';
+  const rand=colors[Math.floor(Math.random()*colors.length)];
+
+  for(let i=0;i<5;i++){
+    const petal=document.createElement('div');
+    petal.className='petal';
+    petal.style.background='linear-gradient(to bottom right,'+rand[0]+','+rand[1]+')';
+    flower.appendChild(petal);
+  }
+
+  const m=document.createElement('div');
+  m.className='message';
+  flower.appendChild(m);
+
+  flower.onclick=function(){
+    this.classList.toggle('open');
+    const msgEl=this.querySelector('.message');
+
+    if(this.classList.contains('open')){
+      const flowers=Array.from(container.children);
+      const idx=flowers.indexOf(this);
+      if(idx>=0) typeMessage(msgEl,messages[idx]);
+
+      this.classList.add('glow');
+      setTimeout(()=>this.classList.remove('glow'),800);
+
+      // Pétalos cayendo
+      for(let i=0;i<20;i++){
+        const pf=document.createElement('div');
+        pf.className='petal-fall';
+        pf.style.left=Math.random()*window.innerWidth+'px';
+        const size=6+Math.random()*12;
+        pf.style.width=size+'px';
+        pf.style.height=size+'px';
+        const colorPair=colors[Math.floor(Math.random()*colors.length)];
+        pf.style.background='radial-gradient(circle,'+colorPair[0]+','+colorPair[1]+',transparent 100%)';
+        pf.style.animationDelay=Math.random()+'s';
+        pf.style.animationDuration=(2+Math.random()*3)+'s';
+        pf.style.transform='rotate('+Math.random()*360+'deg)';
+        document.body.appendChild(pf);
+        setTimeout(()=>pf.remove(),5000);
+      }
+    }
+
+    const flowersAll=Array.from(container.children);
+    const thisIndex=flowersAll.indexOf(this);
+    if(thisIndex===messages.length-1){
+      setTimeout(()=>{
+        document.getElementById('finalMsg').classList.add('show');
+        document.getElementById('finalPhoto').classList.add('show');
+      },500);
+    }
+  };
+
+  container.appendChild(flower);
+});
+
+// Escribir mensajes
+function typeMessage(el,text){
+  el.textContent='';
+  el.style.opacity=1;
+  let i=0;
+  const interval=setInterval(()=>{
+    if(i<text.length){ el.textContent+=text.charAt(i); i++; }
+    else clearInterval(interval);
+  },40);
+}
+
+// Destellos en el fondo
+for(let i=0;i<80;i++){
+  const star=document.createElement('div');
+  star.className='star';
+  star.style.left=Math.random()*window.innerWidth+'px';
+  star.style.top=Math.random()*window.innerHeight+'px';
+  star.style.animationDelay=Math.random()*5+'s';
+  star.style.width=1+Math.random()*2+'px';
+  star.style.height=1+Math.random()*2+'px';
+  document.body.appendChild(star);
+}
+</script>
+</body>
+</html>
